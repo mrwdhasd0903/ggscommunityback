@@ -1,0 +1,222 @@
+<title>职位管理</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">职位管理</div>
+        <div class="layui-card-body">
+
+          <div style="margin-bottom: 10px;">
+            搜索
+            <div class="layui-inline layui-form" lay-filter="component-form-element">
+              <div class="layui-inline">
+                <select name="positionLists_search_key" id="positionLists_search_key" lay-verify="">
+                  <option value="code">code</option>
+                  <option value="name">name</option>
+                  <option value="createTime">createTime</option>
+                  <option value="createUser">createUser</option>
+                  <option value="delFlag">delFlag</option>
+                  <option value="postId">postId</option>
+                  <option value="remark">remark</option>
+                  <option value="sort">sort</option>
+                  <option value="status">status</option>
+                  <option value="updateTime">updateTime</option>
+                  <option value="updateUser">updateUser</option>
+                </select>
+              </div>
+              <div class="layui-inline">
+                <input class="layui-input" name="positionLists_search_val" id="positionLists_search_val"
+                  autocomplete="off">
+              </div>
+            </div>
+            <button class="positionLists_search_btn layui-btn" data-type="reload">搜索</button>
+            <button class="positionLists_add_btn layui-btn layui-btn-normal" data-type="positionLists_add">添加</button>
+          </div>
+
+          <table class="layui-hide" id="positionLists" lay-filter="positionLists"></table>
+          <script type="text/html" id="positionLists-bar">
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+          </script>
+          <script type="text/html" id="status-switch">
+            <input type="checkbox" name="status" lay-skin="switch" lay-text="ENABLE|DISABLE" lay-filter="status"
+              value="{{ d.status }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}"
+              {{d.status == "ENABLE" ? 'checked' : '' }}>
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  layui.use(['admin', 'table', 'form'], function () {
+    var admin = layui.admin
+      , form = layui.form
+      , table = layui.table
+      , $ = layui.$;
+    form.render(null, 'component-form-element');
+    table.render({
+      elem: '#positionLists'
+      , url: layui.api.post_findPostList
+      , cellMinWidth: 130 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      , cols: [[
+        { field: 'code', title: 'code', edit: 'text' }
+        , { field: 'createTime', title: 'createTime' }
+        , { field: 'createUser', title: 'createUser' }
+        , { field: 'delFlag', title: 'delFlag' }
+        , { field: 'name', title: 'name', edit: 'text' }
+        , { field: 'postId', title: 'postId' }
+        , { field: 'remark', title: 'remark', edit: 'text' }
+        , { field: 'sort', title: 'sort', edit: 'text' }
+        , { field: 'status', title: 'status', templet: '#status-switch' }
+        , { field: 'updateTime', title: 'updateTime' }
+        , { field: 'updateUser', title: 'updateUser' }
+        , { title: '操作', align: 'center', fixed: 'right', toolbar: '#positionLists-bar' }
+      ]]
+      , page: true
+      , layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+      , request: {
+        pageName: 'page' //页码的参数名称，默认：page
+        , limitName: 'size' //每页数据量的参数名，默认：limit
+      }
+    });
+    //添加按钮监听
+    $(".positionLists_add_btn").on("click", () => {
+      layer.open({
+        type: 1,
+        title: '填入信息',
+        content: `
+        <div class="layui-form" style="margin:20px" lay-filter="positionLists_add_form">
+          <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+              <input type="text" name="name" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+          <label class="layui-form-label">状态</label>
+          <div class="layui-input-block">
+                <input type="checkbox" name="status" lay-skin="switch" lay-text="正常|停用">
+              </div>
+        </div>
+          <div class="layui-form-item">
+          <label class="layui-form-label">备注</label>
+          <div class="layui-input-block">
+            <input type="text" name="remark" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+          <div class="layui-form-item">
+          <label class="layui-form-label">职位编码</label>
+          <div class="layui-input-block">
+            <input type="text" name="code" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">顺序</label>
+          <div class="layui-input-block">
+            <input type="number" name="sort" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="positionLists_add_form">提交</button>
+              </div>
+            </div>
+        </div>`
+        , success: function (i, l) {
+          form.on('submit(positionLists_add_form)', function (data) {
+            reqData = data.field
+            reqData.status = reqData.status ? "ENABLE" : "DISABLE"
+            admin.req({
+              url: layui.api.post_add
+              , method: 'POST'
+              , contentType: 'application/json'
+              , data: JSON.stringify(reqData)
+              , done: () => {
+                //清空+关闭+刷新
+                $("#positionLists_add_form input").val('')
+                layer.close(l)
+                active['cReload'].call(this)
+              }
+            })
+            return false;
+          });
+        }
+      });
+      form.render(null, 'positionLists_add_form');
+    })
+    //搜索执行重载封装
+    var active = {
+      reload: function () {
+        var _val = $('#positionLists_search_val'),
+          _key = $('#positionLists_search_key');
+        //执行重载 
+        table.reload('positionLists', {
+          page: {
+            curr: 1 //重新从第 1 页开始
+          }
+          , where: {
+            searchVal: _val.val(),
+            searchKey: _key.val()
+          }
+        });
+      },
+      cReload: function () {
+        var _val = $('#positionLists_search_val'),
+          _key = $('#positionLists_search_key');
+        //执行重载 
+        table.reload('positionLists', {
+          where: {
+            searchVal: _val.val(),
+            searchKey: _key.val()
+          }
+        });
+      }
+    };
+    //搜索按钮监听
+    $('.positionLists_search_btn').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+    //监听状态操作
+    form.on('switch(status)', function (obj) {
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+      json = table.clearCacheKey(json);
+      // json[this.name] = obj.elem.checked;
+      //冻结
+      if (obj.elem.checked) {
+        admin.req({
+          url: layui.api.post_freeAccount
+          , data: { postId: json.postId }
+        })
+      } else {
+        admin.req({
+          url: layui.api.post_unFreeAccount
+          , data: { postId: json.postId }
+        })
+      }
+    });
+    //监听单元格编辑
+    table.on('edit(positionLists)', function (obj) {
+      var json = obj.data //得到所在行所有键值
+      admin.req({
+        url: layui.api.post_update
+        , method: 'POST'
+        , contentType: 'application/json'
+        , data: JSON.stringify(json)
+      })
+    });
+    //监听工具条
+    table.on('tool(positionLists)', function (obj) {
+      var data = obj.data;
+      if (obj.event === 'del') {
+        admin.req({
+          url: layui.api.post_logicDelete
+          , data: { postId: data.postId }
+          , done: res => {
+            active['cReload'].call(this)
+          }
+        })
+      }
+    });
+  });
+</script>

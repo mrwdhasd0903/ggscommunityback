@@ -1,0 +1,41 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1000,
+  "data": [{
+    "post_class_id": 1001,
+    "post_class_name": "知识讨论区",
+    "post_class_status": true,
+    "post_class_text": "",
+    "post_count": "3",
+    "create_user": "王达浩"
+  }, {
+    "post_class_id": 1002,
+    "post_class_name": "卖物买物区",
+    "post_class_status": true,
+    "post_class_text": "",
+    "post_count": "4",
+    "create_user": "王达浩"
+  }, {
+    "post_class_id": 1003,
+    "post_class_name": "真情求缘区",
+    "post_class_status": true,
+    "post_class_text": "",
+    "post_count": "5",
+    "create_user": "王达浩"
+  }, {
+    "post_class_id": 1004,
+    "post_class_name": "娱乐灌水区",
+    "post_class_status": true,
+    "post_class_text": "",
+    "post_count": "6",
+    "create_user": "王达浩"
+  }, {
+    "post_class_id": 1005,
+    "post_class_name": "端游开黑区",
+    "post_class_status": true,
+    "post_class_text": "",
+    "post_count": "7",
+    "create_user": "王达浩"
+  }]
+}

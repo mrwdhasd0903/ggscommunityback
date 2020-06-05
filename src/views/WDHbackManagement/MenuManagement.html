@@ -1,0 +1,284 @@
+<title>菜单管理</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">菜单管理</div>
+        <div class="layui-card-body">
+          <div style="margin-bottom: 10px;">
+            <button class="menuLists_add_btn layui-btn layui-btn-normal" data-type="menuLists_add">添加</button>
+            <button class="menuLists_del_btn layui-btn layui-btn-danger" data-type="menuLists_del">删除</button>
+          </div>
+          <!-- <script type="text/html" template lay-url="./MyJson/menu.json" lay-done="menuTableDone(d)"> -->
+          <script type="text/html" template lay-url="{{layui.api.menu_MenuTree}}" lay-done="menuTableDone(d)">
+            <table lay-filter="menu-table-done">
+              <thead>
+                <tr>
+                  <th lay-data="{field:'id',width:95}">id</th>
+                  <th lay-data="{field:'title',width:95, edit: 'text'}">菜单标题</th>
+                  <th lay-data="{field:'i',width:60}" >图标</th>
+                  <th lay-data="{field:'icon',width:160, edit: 'text'}" >图标代码</th>
+                  <th lay-data="{field:'spread',width:95, templet: '#spread-switch'}">默认状态</th>
+                  <th lay-data="{field:'jump', edit: 'text'}">路由</th>
+                </tr> 
+              </thead>
+              <tbody>
+                {{# 
+                  layui.each(d.data,function(index,item){
+                  }}
+                  <tr>
+                    <td>{{item.id}}</td>
+                    <td>{{item.title}}</td>
+                    <td><i class="layui-icon {{item.icon}}" style="font-size: 20px; color: #1E9FFF;"></i></td>
+                    <td>{{item.icon}}</td>
+                    <td>{{item.spread}}</td>
+                    <td>{{item.jump}}</td></tr>
+                    <td></td></tr>
+                    {{#
+                      layui.each(item.children,function(index,item){
+                    }}
+                    <tr>
+                      <td>{{item.id}}</td>
+                      <td>{{item.title}}</td>
+                      <td></td>
+                      <td>{{item.icon}}</td>
+                      <td>{{item.spread}}</td>
+                      <td>{{item.jump}}</td></tr>
+                      <td></td></tr>
+                      {{# 
+                        layui.each(item.children,function(index,item){
+                      }}
+                      <tr>
+                        <td>{{item.id}}</td>
+                        <td>{{item.title}}</td>
+                        <td></td>
+                        <td>{{item.icon}}</td>
+                        <td>{{item.spread}}</td>
+                        <td>{{item.jump}}</td>
+                      </tr>
+                      {{#
+                        })
+                      }}
+                    {{#
+                      })
+                    }}
+                  {{#
+                    })
+                  }}
+              </tbody>
+            </table>
+          </script>
+          <script type="text/html" id="spread-switch">
+            <input {{ d.icon ? '' : 'disabled' }}  type="checkbox" name="spread" lay-skin="switch" lay-text="打开|闭合" lay-filter="spread"
+              value="{{ d.spread }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}"
+              {{ d.spread ? 'checked' : '' }}>
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  menuTableDone = function (d) {
+    layui.use(['admin', 'table', 'form'], function () {
+      var admin = layui.admin
+        , table = layui.table
+        , form = layui.form
+        , $ = layui.$;
+      //转换静态表格
+      table.init('menu-table-done', {
+        limit: 9999 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+      });
+      //监听表格编辑
+      table.on('edit(menu-table-done)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        var data = obj.data; //获得当前行数据
+        if (!data.i && data.icon) {
+          layer.msg('该单元格不可编辑');
+        } else {
+          admin.req({ data: data })
+        }
+      });
+      //监听删除
+      $(".menuLists_del_btn").on("click", () => {
+        layer.open({
+          title: "删除菜单"
+          , type: 1
+          , content: `<div style="margin:20px" >
+                        <div class="layui-form-item">
+                          <label class="layui-form-label">菜单ID</label>
+                          <div class="layui-input-block">
+                            <input type="text" name="del_menu" id="del_menu" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+                          </div>
+                        </div>
+                        <div class="layui-form-item">
+                          <div class="layui-input-block">
+                            <button id="del_menu_ok" class="layui-btn layui-btn-danger">删除</button>
+                          </div>
+                        </div>
+                      </div>`
+          , success: function (i, l) {
+            $("#del_menu_ok").on("click", () => {
+
+              admin.req({
+                url: layui.api.menu_delete
+                , data: { menuId: $("#del_menu").val() }
+                , done: res => {
+                  layer.close(l)
+                }
+              })
+            })
+          }
+        })
+      })
+      //监听状态
+      form.on('switch(spread)', function (obj) {
+        var json = JSON.parse(decodeURIComponent($(this).data('json')));
+        json = table.clearCacheKey(json);
+        json[this.name] = obj.elem.checked;
+        admin.req({ data: json })
+      });
+      //监听添加
+      $(".menuLists_add_btn").on("click", () => {
+        layer.open({
+          type: 1,
+          title: '填入信息',
+          content: `
+        <div class="layui-form" id="menuLists_add_form" style="margin:20px" lay-filter="menuLists_add_form">
+          <div class="layui-form-item">
+          <label class="layui-form-label">菜单名</label>
+          <div class="layui-input-block">
+            <input type="text" name="menuName" id="menuLists_add_title" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">菜单级别</label>
+            <div class="layui-input-block">
+              <select name="menuType" id="menuLists_add_lv" lay-filter="menuLists_add_lv" lay-verify="">
+                  <option value="1">一级</option>
+                  <option value="2">二级</option>
+                  <option value="3">三级</option>
+                </select>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">菜单级别</label>
+            <div class="layui-input-block">
+              <select name="target" lay-verify="">
+                  <option value="menuItem">当前</option>
+                  <option value="menuBlank">新窗口</option>
+                </select>
+            </div>
+          </div>
+          <div class="layui-form-item" id="menuLists_add_permiss" style="display:none">
+          <label class="layui-form-label">权限标识</label>
+          <div class="layui-input-block">
+            <input type="text" name="perms" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+          <div id="menuLists_add_spread-item" class="layui-form-item">
+          <label class="layui-form-label">状态</label>
+          <div class="layui-input-block">
+                <input type="checkbox" name="visible" lay-skin="switch" lay-text="正常|停用">
+              </div>
+        </div>
+        <div id="menuLists_add_parent-item" style="display:none" class="layui-form-item">
+          <label class="layui-form-label">父菜单</label>
+          <div class="layui-input-block">
+            <select name="parentId" id="menuLists_add_parent" lay-filter="menuLists_add_parent" lay-verify="">
+                </select>
+              </div>
+        </div>
+          <div  id="menuLists_add_icon-item" class="layui-form-item">
+          <label class="layui-form-label">图标代码</label>
+          <div class="layui-input-block">
+            <input type="text" name="icon" id="menuLists_add_icon" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">排序</label>
+          <div class="layui-input-block">
+            <input type="number" name="orderNum"  lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+          <div id="menuLists_add_jump" class="layui-form-item">
+          <label class="layui-form-label">路由</label>
+          <div class="layui-input-block">
+            <input type="text" name="url" lay-verify="" placeholder="三级菜单必须填路由" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">备注</label>
+          <div class="layui-input-block">
+            <input type="text" name="remark" lay-verify="" placeholder="备注" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="menuLists_add_form">提交</button>
+              </div>
+            </div>
+        </div>`,
+          success: function (layero, l) {
+            form.on('select(menuLists_add_lv)', function (data) {
+              if (data.value == '1') {
+                $("#menuLists_add_icon-item").css("display", "block");
+                // $("#menuLists_add_spread-item").css('display', "block");
+                $("#menuLists_add_parent-item").css("display", "none");
+                $("#menuLists_add_permiss").css("display", "none");
+              } else if (data.value == '2') {
+                $("#menuLists_add_parent-item").css("display", "block");
+                $("#menuLists_add_icon-item").css("display", "none");
+                // $("#menuLists_add_spread-item").css('display', "none");
+                $("#menuLists_add_permiss").css("display", "block");
+                admin.req({
+                  url: layui.api.menu_firstMenu, success: function (req) {
+                    var permissions = layero.find('#menuLists_add_parent');
+                    var options = '';
+                    //渲染
+                    $.each(req.data, function (index, item) {
+                      options += `<option value="` + item.menuId + `">` + item.menuName + `</option>`;
+                    });
+                    permissions.html(options)
+                    form.render(null, 'menuLists_add_form');
+                  }
+                })
+              } else {
+                $("#menuLists_add_parent-item").css("display", "block");
+                $("#menuLists_add_icon-item").css("display", "none");
+                // $("#menuLists_add_spread-item").css('display', "none");
+                $("#menuLists_add_jump").css("display", "block");
+                $("#menuLists_add_permiss").css("display", "block");
+                admin.req({
+                  url: layui.api.menu_secondMenu, success: function (req) {
+                    var permissions = layero.find('#menuLists_add_parent');
+                    var options = '';
+                    //渲染
+                    $.each(req.data, function (index, item) {
+                      options += `<option value="` + item.menuId + `">` + item.menuName + `</option>`;
+                    });
+                    permissions.html(options)
+                    form.render(null, 'menuLists_add_form');
+                  }
+                })
+              }
+            });
+
+          }
+        });
+        form.render(null, 'menuLists_add_form');
+        form.on('submit(menuLists_add_form)', function (data) {
+          reqData = data.field
+          reqData.visible = reqData.visible ? 'on' : 'off'
+          admin.req({
+            url: layui.api.menu_add
+            , method: 'POST'
+            , contentType: 'application/json'
+            , data: JSON.stringify(reqData)
+          })
+          return false;
+        });
+      })
+    });
+  }
+</script>

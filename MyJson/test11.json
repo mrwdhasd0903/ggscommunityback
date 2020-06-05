@@ -1,0 +1,354 @@
+{
+  "msg": "请求成功",
+  "code": 0,
+  "data": [{
+      "icon": "layui-icon-home",
+      "id": 1,
+      "title": "数据统计",
+      "spread": true,
+      "children": [{
+        "id": 101,
+        "title": "前台数据",
+        "children": [{
+          "id": 500,
+          "title": "可视化",
+          "jump": "WDHdataStatistics/dataFront/Visualization"
+        }, {
+          "id": 501,
+          "title": "文章列表",
+          "jump": "WDHdataStatistics/dataFront/ArticleLists"
+        }, {
+          "id": 502,
+          "title": "帖子列表",
+          "jump": "WDHdataStatistics/dataFront/PostLists"
+        }]
+      }, {
+        "id": 102,
+        "title": "后台数据",
+        "children": [{
+          "id": 503,
+          "title": "登录日志",
+          "jump": "WDHdataStatistics/dataBack/LoginLog"
+        }, {
+          "id": 504,
+          "title": "操作日志",
+          "jump": "WDHdataStatistics/dataBack/OperationLog"
+        }]
+      }]
+    }, {
+      "children": [{
+          "children": [{
+            "children": [],
+            "perms": "system:notice:add",
+            "id": 1000,
+            "menu_Type": "F",
+            "title": "公告新增",
+            "jump": "#"
+          }],
+          "perms": "system:notice:view",
+          "id": 103,
+          "menu_Type": "C",
+          "title": "发布公告",
+          "spread": true,
+          "jump": "WDHpublicContent/PublicNotice"
+        },
+        {
+          "children": [{
+              "children": [],
+              "perms": "system:notice:edit",
+              "id": 1001,
+              "menu_Type": "F",
+              "title": "公告修改",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:notice:remove",
+              "id": 1002,
+              "menu_Type": "F",
+              "title": "公告删除",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:notice:remove",
+              "id": 1003,
+              "menu_Type": "F",
+              "title": "公告查询",
+              "jump": "#"
+            }
+          ],
+          "perms": "system:noticeSys:view",
+          "id": 104,
+          "menu_Type": "C",
+          "title": "公告管理",
+          "spread": true,
+          "jump": "WDHpublicContent/NoticeList"
+        },
+        {
+          "children": [],
+          "perms": "system:traic:view",
+          "id": 105,
+          "menu_Type": "C",
+          "title": "社区指南",
+          "spread": true,
+          "jump": "WDHpublicContent/PublicGuide"
+        }
+      ],
+      "icon": "layui-icon-auz",
+      "perms": "",
+      "id": 2,
+      "menu_Type": "M",
+      "title": "发布内容",
+      "spread": true,
+      "jump": "#"
+    },
+    {
+      "children": [{
+          "children": [{
+              "children": [],
+              "perms": "system:post:list",
+              "id": 1004,
+              "menu_Type": "F",
+              "title": "职位查询",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:post:add",
+              "id": 1005,
+              "menu_Type": "F",
+              "title": "职位新增",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:post:edit",
+              "id": 1006,
+              "menu_Type": "F",
+              "title": "职位修改",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:post:remove",
+              "id": 1007,
+              "menu_Type": "F",
+              "title": "职位删除",
+              "jump": "#"
+            }
+          ],
+          "perms": "system:post:view",
+          "id": 106,
+          "menu_Type": "C",
+          "title": "职位管理",
+          "spread": true,
+          "jump": "WDHbackManagement/PositionManagement"
+        },
+        {
+          "children": [{
+              "children": [],
+              "perms": "system:role:list",
+              "id": 1008,
+              "menu_Type": "F",
+              "title": "角色查询",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:role:add",
+              "id": 1009,
+              "menu_Type": "F",
+              "title": "角色新增",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:role:edit",
+              "id": 1010,
+              "menu_Type": "F",
+              "title": "角色修改",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:role:remove",
+              "id": 1011,
+              "menu_Type": "F",
+              "title": "角色删除",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:role:setauth",
+              "id": 1012,
+              "menu_Type": "F",
+              "title": "权限配置",
+              "jump": "#"
+            }
+          ],
+          "perms": "system:role:view",
+          "id": 107,
+          "menu_Type": "C",
+          "title": "角色管理",
+          "spread": true,
+          "jump": "WDHbackManagement/RoleManagement"
+        },
+        {
+          "children": [{
+              "children": [],
+              "perms": "system:menu:list",
+              "id": 1013,
+              "menu_Type": "F",
+              "title": "菜单查询",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:menu:add",
+              "id": 1014,
+              "menu_Type": "F",
+              "title": "菜单新增",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:menu:edit",
+              "id": 1015,
+              "menu_Type": "F",
+              "title": "菜单修改",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:menu:remove",
+              "id": 1016,
+              "menu_Type": "F",
+              "title": "菜单删除",
+              "jump": "#"
+            }
+          ],
+          "perms": "system:menu:view",
+          "id": 108,
+          "menu_Type": "C",
+          "title": "菜单管理",
+          "spread": true,
+          "jump": "WDHbackManagement/MenuManagement"
+        }
+      ],
+      "icon": "layui-icon-app",
+      "perms": "",
+      "id": 3,
+      "menu_Type": "M",
+      "title": "后台管理",
+      "spread": true,
+      "jump": "#"
+    },
+    {
+      "children": [{
+          "children": [],
+          "perms": "content:index:view",
+          "id": 109,
+          "menu_Type": "C",
+          "title": "首页设置",
+          "spread": true,
+          "jump": "WDHfrontManagement/HomeSetting"
+        },
+        {
+          "children": [],
+          "perms": "content:flink:view",
+          "id": 110,
+          "menu_Type": "C",
+          "title": "首页设置",
+          "spread": true,
+          "jump": "WDHfrontManagement/OutsideChain"
+        },
+        {
+          "children": [],
+          "perms": "content:article:view",
+          "id": 111,
+          "menu_Type": "C",
+          "title": "文章分类",
+          "spread": true,
+          "jump": "WDHfrontManagement/ArticleClassification"
+        },
+        {
+          "children": [],
+          "perms": "content:tiezi:view",
+          "id": 112,
+          "menu_Type": "C",
+          "title": "帖子分类",
+          "spread": true,
+          "jump": "WDHfrontManagement/PostClassification"
+        }
+      ],
+      "icon": "layui-icon-auz",
+      "perms": null,
+      "id": 4,
+      "menu_Type": "M",
+      "title": "前台管理",
+      "spread": true,
+      "jump": "#"
+    },
+    {
+      "children": [{
+          "children": [{
+              "children": [],
+              "perms": "system:user:list",
+              "id": 1017,
+              "menu_Type": "F",
+              "title": "用户查询",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:user:add",
+              "id": 1018,
+              "menu_Type": "F",
+              "title": "用户新增",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:user:edit",
+              "id": 1019,
+              "menu_Type": "F",
+              "title": "用户修改",
+              "jump": "#"
+            },
+            {
+              "children": [],
+              "perms": "system:user:remove",
+              "id": 1020,
+              "menu_Type": "F",
+              "title": "用户删除",
+              "jump": "#"
+            }
+          ],
+          "perms": "system:admin:view",
+          "id": 113,
+          "menu_Type": "C",
+          "title": "管理员",
+          "spread": true,
+          "jump": "WDHpersonnelManagement/Administrator"
+        },
+        {
+          "children": [],
+          "perms": "content:member:view",
+          "id": 114,
+          "menu_Type": "C",
+          "title": "会员",
+          "spread": true,
+          "jump": "WDHpersonnelManagement/Members"
+        }
+      ],
+      "icon": "layui-icon-component",
+      "perms": "",
+      "id": 5,
+      "menu_Type": "M",
+      "title": "用户管理",
+      "spread": true,
+      "jump": "#"
+    }
+  ]
+}

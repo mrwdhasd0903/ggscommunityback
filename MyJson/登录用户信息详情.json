@@ -1,0 +1,14 @@
+{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "rolename": "鉴黄师",
+    "name": "胖虎",
+    "username": "admin1234",
+    "sex": "女",
+    "role": 0,
+    "email": "123@123.com",
+    "remarks": "我是一个帅比",
+    "cellphone": "1008611"
+  }
+}

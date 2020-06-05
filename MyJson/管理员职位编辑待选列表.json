@@ -1,0 +1,21 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1000,
+  "data": [{
+    "position_id": 1001,
+    "position_name": "审核员"
+  }, {
+    "position_id": 1002,
+    "position_name": "广告师"
+  }, {
+    "position_id": 1003,
+    "position_name": "鉴黄师"
+  }, {
+    "position_id": 1004,
+    "position_name": "封号师"
+  }, {
+    "position_id": 1005,
+    "position_name": "狂战士"
+  }]
+}

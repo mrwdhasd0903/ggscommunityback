@@ -1,0 +1,140 @@
+<title>文章列表</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">文章列表</div>
+        <div class="layui-card-body">
+          <div style="margin-bottom: 10px;">
+            搜索
+            <div class="layui-inline layui-form" lay-filter="component-form-element">
+              <div class="layui-inline">
+                <select id="articleLists_search_key" name="articleLists_search_key" lay-verify="">
+                  <option value="article_title">文章标题</option>
+                  <option value="content_type">分类</option>
+                  <option value="status">审核状态</option>
+                  <option value="del_flag">删除状态</option>
+                  <option value="user_id">发布人id</option>
+                  <option value="del_text">删除原因</option>
+                  <option value="is_recommend">推荐序号</option>
+                </select>
+              </div>
+              <div class="layui-inline">
+                <input class="layui-input" name="articleLists_search_val" id="articleLists_search_val"
+                  autocomplete="off">
+              </div>
+            </div>
+            <button class="articleLists_search_btn layui-btn" data-type="reload">搜索</button>
+          </div>
+
+          <table class="layui-hide" id="dataFront-articleLists" lay-filter="dataFront-articleLists"></table>
+          <script type="text/html" id="dataFront-articleLists-bar">
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="go">跳转</a>
+            <a class="layui-btn layui-btn-xs" lay-event="audit">审核</a>
+            <a class="layui-btn layui-btn-xs" lay-event="replay">管理回复</a>
+          </script>
+          <script type="text/html" id="status-switch">
+          <input type="checkbox" name="status" lay-skin="switch" lay-text="通过|审核中" lay-filter="status"
+            value="{{ d.status }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}"
+            {{ d.status ? 'checked' : '' }}>
+          </script>
+          <script type="text/html" id="del_flag-switch">
+            <input type="checkbox" name="del_flag" lay-skin="switch" lay-text="删除|正常" lay-filter="del_flag"
+              value="{{ d.del_flag }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}"
+              {{ d.del_flag ? 'checked' : '' }}>
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use(['admin', 'table', 'form'], function () {
+    var admin = layui.admin
+      , form = layui.form
+      , table = layui.table
+      , $ = layui.$;
+    form.render(null, 'component-form-element');
+    table.render({
+      elem: '#dataFront-articleLists'
+      , url: './MyJson/文章列表.json'
+      , cellMinWidth: 60 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      , cols: [[
+        { field: 'article_id', title: 'ID' }
+        , { field: 'article_title', title: '文章标题' }
+        , { field: 'create_time', title: '发布时间', sort: true }
+        , { field: 'user_id', title: '发布人id' }
+        , { field: 'del_flag', title: '删除标志', sort: true, templet: '#del_flag-switch' }
+        , { field: 'del_text', title: '删除原因', sort: true, edit: 'text' }
+        , { field: 'like_count', title: '点赞人数', sort: true }
+        , { field: 'comment_count', title: '评论人数', sort: true }
+        , { field: 'browse_count', title: '浏览人数', sort: true }
+        , { field: 'status', title: '审核状态', sort: true, templet: '#status-switch' }
+        , { field: 'collection_count', title: '收藏人数', sort: true }
+        , { field: 'is_recommend', title: '推荐序号', sort: true, edit: 'text' }
+        , { field: 'content_type', title: '分类', sort: true }
+        , { title: '操作', width: 200, align: 'center', fixed: 'right', toolbar: '#dataFront-articleLists-bar' }
+      ]]
+      , page: true
+      , request: {
+        pageName: 'currpage' //当前页码的参数名称，
+        , limitName: 'limitnums' //每页数据量的参数名，
+      }
+    });
+    //搜索执行重载封装
+    var active = {
+      reload: function () {
+        var _val = $('#articleLists_search_val'),
+          _key = $('#articleLists_search_key');
+        //执行重载 
+        table.reload('dataFront-articleLists', {
+          page: {
+            curr: 1 //重新从第 1 页开始
+          }
+          , where: {
+            articleLists_search_val: _val.val(),
+            articleLists_search_key: _key.val()
+          }
+        });
+      }
+    };
+    //搜索按钮监听
+    $('.articleLists_search_btn').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+    //监听审核操作
+    form.on('switch(status)', function (obj) {
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+      json = table.clearCacheKey(json);
+      json[this.name] = obj.elem.checked;
+      admin.req({ data: json })
+    });
+    //监听删除操作
+    form.on('switch(del_flag)', function (obj) {
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+      json = table.clearCacheKey(json);
+      json[this.name] = obj.elem.checked;
+      admin.req({ data: json })
+    });
+    //监听单元格编辑
+    table.on('edit(dataFront-articleLists)', function (obj) {
+      var json = obj.data //得到所在行所有键值
+      admin.req({ data: json })
+    });
+    //监听工具条
+    table.on('tool(dataFront-articleLists)', function (obj) {
+      var data = obj.data;
+      if (obj.event === 'go') {
+        layer.msg('ID：' + data.article_id + ' 的跳转操作');
+      }
+      else if (obj.event === 'audit') {
+        admin.req({ data: { article_id: data.article_id } })
+        layer.alert("ID为" + data.article_id + '文章的内容')
+      } else if (obj.event === 'replay') {
+        layer.alert("ID为" + data.article_id + '文章的回复列表')
+      }
+    });
+  });
+</script>

@@ -1,0 +1,115 @@
+{
+  "code": 0,
+  "msg": "",
+  "data": [{
+    "title": "数据统计",
+    "id": "数据统计",
+    "icon": "layui-icon-home",
+    "spread": true,
+    "children": [{
+      "title": "前台数据",
+      "id": "前台数据",
+      "children": [{
+        "title": "可视化",
+        "id": "可视化",
+        "jump": "WDHdataStatistics/dataFront/Visualization"
+      }, {
+        "title": "文章列表",
+        "id": "文章列表",
+        "jump": "WDHdataStatistics/dataFront/ArticleLists"
+      }, {
+        "title": "帖子列表",
+        "id": "帖子列表",
+        "jump": "WDHdataStatistics/dataFront/PostLists"
+      }]
+    }, {
+      "title": "后台数据",
+      "id": "后台数据",
+      "children": [{
+        "title": "登录日志",
+        "id": "登录日志",
+        "jump": "WDHdataStatistics/dataBack/LoginLog"
+      }, {
+        "title": "操作日志",
+        "id": "操作日志",
+        "jump": "WDHdataStatistics/dataBack/OperationLog"
+      }]
+    }]
+  }, {
+    "title": "发布内容",
+    "id": "发布内容",
+    "icon": "layui-icon-auz",
+    "spread": true,
+    "children": [{
+      "title": "发布公告",
+      "id": "发布公告",
+      "jump": "WDHpublicContent/PublicNotice"
+    }, {
+      "title": "公告管理",
+      "id": "公告管理",
+      "jump": "WDHpublicContent/NoticeList"
+    }, {
+      "title": "社区指南",
+      "id": "社区指南",
+      "jump": "WDHpublicContent/PublicGuide"
+    }]
+  }, {
+    "title": "后台管理",
+    "id": "后台管理",
+    "icon": "layui-icon-app",
+    "spread": true,
+    "children": [{
+      "title": "职位管理",
+      "id": "职位管理",
+      "jump": "WDHbackManagement/PositionManagement"
+    }, {
+      "title": "角色管理",
+      "id": "角色管理",
+      "jump": "WDHbackManagement/RoleManagement"
+    }, {
+      "title": "菜单管理",
+      "id": "菜单管理",
+      "jump": "WDHbackManagement/MenuManagement"
+    }]
+  }, {
+    "title": "前台管理",
+    "id": "前台管理",
+    "icon": "layui-icon-auz",
+    "spread": true,
+    "children": [{
+      "title": "首页设置",
+      "id": "首页设置",
+      "jump": "WDHfrontManagement/HomeSetting"
+    }, {
+      "title": "外链设置",
+      "id": "外链设置",
+      "jump": "WDHfrontManagement/OutsideChain"
+    }, {
+      "title": "文章分类",
+      "id": "文章分类",
+      "jump": "WDHfrontManagement/ArticleClassification"
+    }, {
+      "title": "帖子分类",
+      "id": "帖子分类",
+      "jump": "WDHfrontManagement/PostClassification"
+    }, {
+      "title": "标签管理",
+      "id": "标签管理",
+      "jump": "WDHfrontManagement/TagManagement"
+    }]
+  }, {
+    "title": "用户管理",
+    "id": "用户管理",
+    "icon": "layui-icon-component",
+    "spread": true,
+    "children": [{
+      "title": "管理员",
+      "id": "管理员",
+      "jump": "WDHpersonnelManagement/Administrator"
+    }, {
+      "title": "会员",
+      "id": "会员",
+      "jump": "WDHpersonnelManagement/Members"
+    }]
+  }]
+}

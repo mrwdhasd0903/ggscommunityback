@@ -1,0 +1,51 @@
+<title>社区指南</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div style="position:relative;" class="layui-card-header">社区指南
+          <button style="position:absolute;right:10px; top: 10px;" class="layui-btn layui-btn-danger layui-btn-sm"
+            id="guide_public">提交</button>
+        </div>
+        <div class="layui-card-body">
+          <div id="guide_editor">
+            <textarea id="guide_editor_textarea" style="display:none;"></textarea>
+          </div>
+          <link rel="stylesheet" href="./start/editormd/css/editormd.min.css">
+          <script src="./start/editormd/jquery-1.11.0.min.js"></script>
+          <script src="./start/editormd/editormd.min.js"></script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+
+</style>
+<script>
+  layui.use(['form', 'table', 'admin'], function () {
+    var $ = layui.jquery
+      , admin = layui.admin
+      , form = layui.form
+    var guide_editor
+    //渲染编辑器
+    guide_editor = editormd("guide_editor", {
+      height: "800px",
+      path: "./start/editormd/lib/",
+    });
+    //获取内容
+    admin.req({
+      url: "./MyJson/社区指南内容.json",
+      success: function (res) {
+        $("#guide_editor_textarea").text(res.data.notice_content);
+      }
+    })
+    $("#guide_public").on("click", () => {
+      admin.req({
+        type: 'POST',
+        data: { guide: guide_editor.getMarkdown() }
+      });
+    })
+
+  })
+</script>

@@ -1,0 +1,116 @@
+<title>公告管理</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">公告管理</div>
+        <div class="layui-card-body">
+
+          <div style="margin-bottom: 10px;">
+            搜索
+            <div class="layui-inline layui-form" lay-filter="component-form-element">
+              <div class="layui-inline">
+                <select name="notice_list_key" id="notice_list_key" lay-verify="">
+                  <option value="content">content</option>
+                  <option value="createTime">createTime</option>
+                  <option value="createUser">createUser</option>
+                  <option value="noticeId">noticeId</option>
+                  <option value="status">status</option>
+                  <option value="title">title</option>
+                  <option value="updateTime">updateTime</option>
+                  <option value="updateUser">updateUser</option>
+                </select>
+              </div>
+              <div class="layui-inline">
+                <input class="layui-input" name="notice_list_val" id="notice_list_val" autocomplete="off">
+              </div>
+            </div>
+            <button class="notice_list_btn layui-btn" data-type="reload">搜索</button>
+          </div>
+
+          <table class="layui-hide" id="notice_list" lay-filter="notice_list"></table>
+          <script type="text/html" id="status-switch">
+            <input type="checkbox" name="notice_status" lay-skin="switch" lay-text="1|0" lay-filter="notice_status"
+              value="{{ d.notice_status }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}"
+              {{ d.status!='0' ? 'checked' : '' }}>
+            </script>
+          <script type="text/html" id="notice_list_bar">
+              <a class="layui-btn layui-btn-primary layui-btn-xs" lay-href="/WDHpublicContent/PublicNotice/nid={{d.noticeId}}">修改</a>
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use(['admin', 'table', 'form'], function () {
+    var admin = layui.admin
+      , form = layui.form
+      , table = layui.table
+      , $ = layui.$;
+    form.render(null, 'component-form-element');
+    table.render({
+      elem: '#notice_list'
+      , url: layui.api.notice_findAllPage
+      , cellMinWidth: 60 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      , cols: [[
+        { field: 'noticeId', title: 'noticeId' }
+        , { field: 'title', title: 'title' }
+        , { field: 'status', title: 'status', templet: '#status-switch' }
+        , { field: 'sort', title: 'sort' }
+        , { field: 'createTime', title: 'createTime' }
+        , { field: 'createUser', title: 'createUser' }
+        , { field: 'updateTime', title: 'createUser' }
+        , { field: 'updateUser', title: 'createUser' }
+        , { title: '操作', width: 70, align: 'center', fixed: 'right', toolbar: '#notice_list_bar' }
+      ]]
+      , page: true
+      , layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+      , request: {
+        pageName: 'page' //页码的参数名称，默认：page
+        , limitName: 'size' //每页数据量的参数名，默认：limit
+      }
+    });
+    //搜索执行重载封装
+    var active = {
+      reload: function () {
+        var _val = $('#notice_list_val'),
+          _key = $('#notice_list_key');
+        //执行重载 
+        table.reload('notice_list', {
+          page: {
+            curr: 1 //重新从第 1 页开始
+          }
+          , where: {
+            searchVal: _val.val(),
+            searchKey: _key.val()
+          }
+        });
+      }
+    };
+    //搜索按钮监听
+    $('.notice_list_btn').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+    //监听状态操作
+    form.on('switch(notice_status)', function (obj) {
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+      json = table.clearCacheKey(json);
+      // json[this.name] = obj.elem.checked;
+      if (!obj.elem.checked) {
+        admin.req({
+          url: layui.api.notice_freeze,
+          data: { noticeId: json.noticeId }
+        })
+      } else {
+        admin.req({
+          url: layui.api.notice_unfreeze,
+          data: { noticeId: json.noticeId }
+        })
+      }
+
+    });
+  });
+</script>

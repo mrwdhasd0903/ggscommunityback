@@ -1,0 +1,105 @@
+<title>会员</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">会员</div>
+        <div class="layui-card-body">
+
+          <div style="margin-bottom: 10px;">
+            搜索
+            <div class="layui-inline layui-form" lay-filter="component-form-element">
+              <div class="layui-inline">
+                <select name="person-member-Lists_key" id="person-member-Lists_key" lay-verify="">
+                  <option value="member_name">昵称</option>
+                  <option value="member_username">账号</option>
+                  <option value="member_tel">手机</option>
+                  <option value="member_status">状态</option>
+                  <option value="status_text">封禁原因</option>
+                  <option value="member_remake">备注</option>
+                </select>
+              </div>
+              <div class="layui-inline">
+                <input class="layui-input" name="person-member-Lists_val" id="person-member-Lists_val"
+                  autocomplete="off">
+              </div>
+            </div>
+            <button class="person-member-Lists_btn layui-btn" data-type="reload">搜索</button>
+          </div>
+
+          <table class="layui-hide" id="person-member-Lists" lay-filter="person-member-Lists"></table>
+          <script type="text/html" id="status-switch">
+            <input type="checkbox" name="member_status" lay-skin="switch" lay-text="正常|封禁" lay-filter="member_status"
+              value="{{ d.member_status }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}"
+              {{ d.member_status ? 'checked' : '' }}>
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use(['admin', 'table', 'form'], function () {
+    var admin = layui.admin
+      , form = layui.form
+      , table = layui.table
+      , $ = layui.$;
+    form.render(null, 'component-form-element');
+
+    table.render({
+      elem: '#person-member-Lists'
+      , url: './MyJson/会员.json'
+      , cellMinWidth: 60 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      , cols: [[
+        { field: 'member_id', title: 'id' }
+        , { field: 'member_name', title: '昵称' }
+        , { field: 'member_username', title: '账号' }
+        , { field: 'member_tel', title: '手机' }
+        , { field: 'member_status', title: '状态', sort: true, templet: '#status-switch' }
+        , { field: 'status_text', title: '封禁原因', sort: true, edit: 'text' }
+        , { field: 'member_remake', title: '备注', edit: 'text' }
+      ]]
+      , page: true
+      , layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+      , request: {
+        pageName: 'currpage' //页码的参数名称，默认：page
+        , limitName: 'limitnums' //每页数据量的参数名，默认：limit
+      }
+    });
+    //搜索执行重载封装
+    var active = {
+      reload: function () {
+        var _val = $('#person-member-Lists_val'),
+          _key = $('#person-member-Lists_key');
+        //执行重载 
+        table.reload('person-member-Lists', {
+          page: {
+            curr: 1 //重新从第 1 页开始
+          }
+          , where: {
+            person_member_Lists_val: _val.val(),
+            person_member_Lists_key: _key.val()
+          }
+        });
+      }
+    };
+    //搜索按钮监听
+    $('.person-member-Lists_btn').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+    //监听状态操作
+    form.on('switch(member_status)', function (obj) {
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+      json = table.clearCacheKey(json);
+      json[this.name] = obj.elem.checked;
+      admin.req({ data: json })
+    });
+    //监听单元格编辑
+    table.on('edit(person-member-Lists)', function (obj) {
+      var json = obj.data //得到所在行所有键值
+      admin.req({ data: json })
+    });
+  });
+</script>

@@ -1,0 +1,100 @@
+<title>发布公告</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header" id="public_header">发布公告</div>
+        <div class="layui-card-body">
+          <script type="text/html"
+            lay-url="{{layui.api.notice_findById}}?noticeId={{ layui.router().search.nid?layui.router().search.nid:-1 }}"
+            template lay-done="noticeFormDone(d)">
+          <form class="layui-form" lay-filter="public_notice_form">
+            <div class="layui-form-item">
+              <label class="layui-form-label">公告标题</label>
+              <div class="layui-input-block">
+                <input type="text"
+                value = "{{layui.router().search.nid ? d.data.status:'' }}"
+                name="title" lay-verify="required" placeholder="" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">发布状态</label>
+              <div class="layui-input-inline">
+                <input type="checkbox"
+                {{ layui.router().search.nid&&d.data.status != '0' ? 'checked' : '' }}
+                lay-text="1|0" name="status" lay-skin="switch">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">排序</label>
+              <div class="layui-input-inline">
+                <input type="number" 
+                value = "{{layui.router().search.nid ? d.data.sort:'' }}"
+                name="sort" lay-verify="required" placeholder="" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                  <button class="layui-btn" lay-submit lay-filter="public_notice_form">提交</button>
+              </div>
+            </div>
+          </form>
+        </script>
+          <div id="public_editor">
+            <textarea id="public_editor_textarea" style="display:none;"></textarea>
+          </div>
+          <link rel="stylesheet" href="./start/editormd/css/editormd.min.css">
+          <script src="./start/editormd/jquery-1.11.0.min.js"></script>
+          <script src="./start/editormd/editormd.min.js"></script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+
+</style>
+<script>
+  function noticeFormDone(d) {
+    var editor
+    //渲染编辑器
+    editor = editormd("public_editor", {
+      height: "600px",
+      path: "./start/editormd/lib/",
+    });
+    layui.use(['form', 'table', 'admin'], function () {
+      var $ = layui.jquery
+        , admin = layui.admin
+        , form = layui.form
+        , table = layui.table
+        , router = layui.router()
+      //如果是修改公告 ,则渲染内容
+      if (router.search.nid) {
+        $("#public_header").html("修改ID为[<span style='color:red'>" + router.search.nid + "</span>]的公告")
+        $("#public_editor_textarea").text(d.data.content);
+      }
+      form.render(null, 'public_notice_form');
+      //监听提交
+      form.on('submit(public_notice_form)', function (data) {
+        var data = data.field
+        data.status = data.status ? 1 : 0
+        data.noticeId = router.search.nid
+        data['content'] = editor.getMarkdown();
+        var urlapi = router.search.nid ? layui.api.notice_update : layui.api.notice_add
+        admin.req({
+          url: urlapi
+          , method: 'POST'
+          , contentType: 'application/json'
+          , data: JSON.stringify(data)
+          , done: res => {
+            location.hash = '/WDHpublicContent/NoticeList';
+          }
+        });
+        return false
+      });
+    })
+  }
+
+</script>

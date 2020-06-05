@@ -1,0 +1,109 @@
+<title>首页设置</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">首页设置</div>
+        <div class="layui-card-body">
+          <script type="text/html" template lay-url="./MyJson/网站设置.json" lay-done="homesetFormDone()">
+          <form class="layui-form" lay-filter="component-form-element">
+            <div class="layui-form-item">
+              <label class="layui-form-label">网站标题</label>
+              <div class="layui-input-block">
+                <input type="text" value="{{d.data[0].front_title}}" name="front_title" lay-verify="required" placeholder="" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">标题icon</label>
+              <div class="layui-input-block">
+                <input type="text"  value="{{d.data[0].front_icon}}" name="front_icon" lay-verify="required" placeholder="" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-upload layui-input-block">
+                <button type="button" class="layui-btn layui-btn-normal" id="upload-icon">选择图片</button>
+                <button type="button" class="layui-btn" id="upload-icon-action">上传</button>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">导航栏logo</label>
+              <div class="layui-input-block">
+                <input type="text"  value="{{d.data[0].front_logo}}"  name="front_logo" lay-verify="required" placeholder="" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-upload layui-input-block">
+                <button type="button" class="layui-btn layui-btn-normal" id="upload-logo">选择图片</button>
+                <button type="button" class="layui-btn" id="upload-logo-action">上传</button>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <div class="layui-footer">
+                  <button class="layui-btn" lay-submit lay-filter="homeset-form-element">修改</button>
+                  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+              </div>
+            </div>
+          </form>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var homesetFormDone = () => {
+    layui.use(['upload'], function () {
+      var upload = layui.upload
+      //上传icon
+      upload.render({
+        elem: '#upload-icon'
+        , url: './MyJson/文件上传.json'
+        , auto: false
+        , acceptMime: 'image/*'
+        , exts: 'jpg|png|gif|bmp|jpeg|ico'
+        , bindAction: '#upload-icon-action'
+        //上传之前
+        , before: function (res) {
+          console.log(res);
+        }
+        //上传成功
+        , done: function (res) {
+          console.log(res)
+          //将res的对象的data.src渲染到表单
+        },
+      });
+      //上传logo
+      upload.render({
+        elem: '#upload-logo'
+        , url: 'http://kxinggs.cn:8080/web-manager/upload/oss.do'
+        , auto: false
+        , acceptMime: 'image/*'
+        , exts: 'jpg|png|gif|bmp|jpeg|ico'
+        , bindAction: '#upload-logo-action'
+        , done: function (res) {
+          console.log(res)
+          //将res的对象的data.src渲染到表单
+        }
+        , error: res => {
+          console.log(res);
+        }
+      });
+    });
+  }
+  layui.use(['form', 'admin'], function () {
+    var $ = layui.jquery
+      , admin = layui.admin
+      , form = layui.form
+    //监听提交
+    form.on('submit(homeset-form-element)', function (data) {
+      admin.req({ data: data.field });
+      return false
+    });
+  });
+</script>

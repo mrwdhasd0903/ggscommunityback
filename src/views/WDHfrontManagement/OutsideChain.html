@@ -1,0 +1,228 @@
+<title>外链设置</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">banner</div>
+        <div class="layui-card-body">
+          <script type="text/html" template lay-url="./MyJson/banner.json" lay-done="setBannerSwitch(d)">
+          <form class="layui-form" lay-filter="component-form-element" >
+            <div class="layui-form-item">
+              <label class="layui-form-label">外链地址</label>
+              <div class="layui-input-block">
+                <input type="text" value="{{d.data[0].href}}" name="banner_href" lay-verify="required" placeholder="" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">图片地址</label>
+              <div class="layui-input-block">
+                <input type="text"  value="{{d.data[0].src}}" name="banner_src" lay-verify="required" placeholder="" autocomplete="off"
+                  class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-upload layui-input-block">
+                <button type="button" class="layui-btn layui-btn-normal" id="upload-banner">选择图片</button>
+                <button type="button" class="layui-btn" id="upload-banner-action">上传</button>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">启用状态</label>
+              <div class="layui-input-block">
+                <input type="checkbox" lay-text="开启|关闭" name="banner_switch" lay-skin="switch" lay-filter="component-form-switchTest">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                  <button class="layui-btn" lay-submit lay-filter="bannerset-form-element">确定</button>
+                  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+              </div>
+            </div>
+          </form>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">轮播图</div>
+        <div class="layui-card-body">
+          <button style="margin-bottom:10px" type="button" class="layui-btn layui-btn-normal"
+            id="outside-carousel-upload">上传图片</button>
+          <div class="layui-input-inline">
+            <input style="margin-bottom:10px" type="text" id="outside-carousel-upload-input" placeholder="上传完图片在这里复制地址"
+              class="layui-input">
+          </div>
+          <div class="layui-input-inline">
+            <button style="margin-bottom:10px;margin-left:50px" type="button" class="layui-btn"
+              id="outside-carousel-add">添加</button>
+          </div>
+          <table class="layui-hide" id="outside-carousel-form-element" lay-filter="outside-carousel-form-element">
+          </table>
+          <script type="text/html" id="status-switch">
+            <input type="checkbox" name="status" lay-skin="switch" lay-text="启用|停用" lay-filter="status"
+              value="{{ d.status }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}"
+              {{ d.status ? 'checked' : '' }}>
+            </script>
+          <script type="text/html" id="dataFront-articleLists-bar">
+              <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  //设置bannerSwitch 
+  setBannerSwitch = function (d) {
+    layui.use(['upload', 'layer', 'form', 'admin'], function () {
+      var $ = layui.jquery
+        , layer = layui.layer
+        , form = layui.form
+        , admin = layui.admin
+        , upload = layui.upload;
+      if (d.data[0].switch) {
+        $('input[name="banner_switch"]').attr('checked', 'checked');
+      } else {
+        $('input[name="banner_switch"]').removeAttr('checked');
+      }
+
+      //监听添加按钮
+      $("#outside-carousel-add").on("click", () => {
+        layer.open({
+          type: 1,
+          title: '填写信息',
+          content: `
+        <div class="layui-form" style="margin:20px" lay-filter="outside-carousel-add_form">
+          <div class="layui-form-item">
+            <label class="layui-form-label">图片地址</label>
+            <div class="layui-input-block">
+              <input type="text" name="outside_carousel_add_src" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">外链地址</label>
+            <div class="layui-input-block">
+              <input type="text" name="outside_carousel_add_href" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="outside_carousel_add_status" lay-skin="switch" lay-text="正常|停用">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+              <input type="text" name="outside_carousel_add_text" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit lay-filter="outside-carousel-add_form">提交</button>
+            </div>
+          </div>
+        </div>
+          `,
+          success: function () {
+            form.render(null, 'outside-carousel-add_form');
+            form.on('submit(outside-carousel-add_form)', function (data) {
+              admin.req({ data: data.field })
+              return false;
+            });
+
+          }
+        })
+
+      })
+      //banner上传图片
+      upload.render({
+        elem: '#upload-banner'
+        , url: './MyJson/文件上传.json'
+        , auto: false
+        , acceptMime: 'image/*'
+        , exts: 'jpg|png|gif|bmp|jpeg|ico'
+        , bindAction: '#upload-banner-action'
+        //上传之前
+        , before: function (res) {
+          console.log(res);
+        }
+        //上传成功
+        , done: function (res) {
+          console.log(res)
+          //将res的对象的data.src渲染到表单
+        }
+        , choose: function () {
+        }
+      });
+      //轮播图的上传
+      upload.render({
+        elem: '#outside-carousel-upload'
+        , url: './MyJson/文件上传.json'
+        , choose: function () {
+          $("#outside-carousel-upload-input").val("这里是返回的图片地址")
+        }
+        , done: function (res) {
+          console.log(res)
+        }
+      });
+    })
+  }
+
+  layui.use(['form', 'table', 'admin'], function () {
+    var $ = layui.jquery
+      , admin = layui.admin
+      , form = layui.form
+      , table = layui.table
+
+    //轮播图表格渲染
+    table.render({
+      elem: '#outside-carousel-form-element'
+      , url: './MyJson/轮播图.json'
+      , cellMinWidth: 60 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      , cols: [[
+        { field: 'id', title: 'id' }
+        , { field: 'src', title: '图片地址', edit: 'text' }
+        , { field: 'href', title: '外链地址', edit: 'text' }
+        , { field: 'clickCount', title: '点击量' }
+        , { field: 'status', title: '状态', templet: '#status-switch' }
+        , { field: 'remake', title: '描述', edit: 'text' }
+        , { title: '操作', width: 160, align: 'center', fixed: 'right', toolbar: '#dataFront-articleLists-bar' }
+      ]]
+    });
+    //监听轮播item的状态
+    form.on('switch(status)', function (obj) {
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+      json = table.clearCacheKey(json);
+      json[this.name] = obj.elem.checked;
+      admin.req({ data: json })
+    });
+    //监听单元格编辑
+    table.on('edit(outside-carousel-form-element)', function (obj) {
+      var json = obj.data //得到所在行所有键值
+      admin.req({ data: json })
+    });
+    //监听工具条
+    table.on('tool(outside-carousel-form-element)', function (obj) {
+      var data = obj.data;
+      if (obj.event === 'del') {
+        admin.req({ data: { article_id: data } })
+      }
+    });
+
+    //监听提交
+    form.on('submit(bannerset-form-element)', function (data) {
+      if (data.field.banner_switch == 'on') {
+        data.field.banner_switch = true
+      } else {
+        data.field.banner_switch = false
+      }
+      admin.req({ data: data.field });
+      return false
+    });
+  });
+</script>

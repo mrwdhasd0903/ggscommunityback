@@ -1,0 +1,33 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1000,
+  "data": [{
+    "admin_id": 1001,
+    "admin_name": "王达浩",
+    "admin_username": "admin1001",
+    "admin_position": [{
+      "position_id": 1001,
+      "position_name": "审核员"
+    }, {
+      "position_id": 1002,
+      "position_name": "广告师"
+    }, {
+      "position_id": 1003,
+      "position_name": "鉴黄师"
+    }],
+    "admin_role": [{
+      "role_id": 1001,
+      "role_name": "超级管理员"
+    }, {
+      "role_id": 1002,
+      "role_name": "普通管理员"
+    }, {
+      "role_id": 1003,
+      "role_name": "再来一个管理员"
+    }],
+    "admin_status": true,
+    "admin_tel": "13267702472",
+    "admin_remake": ""
+  }]
+}

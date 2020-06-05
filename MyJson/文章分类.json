@@ -1,0 +1,41 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1000,
+  "data": [{
+    "article_class_id": 1001,
+    "article_class_name": "生活纪录",
+    "article_class_status": true,
+    "article_class_text": "",
+    "article_count": "3",
+    "create_user": "王达浩"
+  },{
+    "article_class_id": 1002,
+    "article_class_name": "学术分享",
+    "article_class_status": true,
+    "article_class_text": "",
+    "article_count": "4",
+    "create_user": "王达浩"
+  },{
+    "article_class_id": 1003,
+    "article_class_name": "党文团文",
+    "article_class_status": true,
+    "article_class_text": "",
+    "article_count": "5",
+    "create_user": "王达浩"
+  },{
+    "article_class_id": 1004,
+    "article_class_name": "生活纪录",
+    "article_class_status": true,
+    "article_class_text": "",
+    "article_count": "6",
+    "create_user": "王达浩"
+  },{
+    "article_class_id": 1005,
+    "article_class_name": "阿斯蒂芬",
+    "article_class_status": true,
+    "article_class_text": "",
+    "article_count": "7",
+    "create_user": "王达浩"
+  }]
+}

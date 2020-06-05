@@ -1,0 +1,118 @@
+<title>登录日志</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">登录日志</div>
+        <div class="layui-card-body">
+          <div style="margin-bottom: 10px;">
+            搜索
+            <div class="layui-inline layui-form" lay-filter="component-form-element">
+              <div class="layui-inline">
+                <select name="loginlogLists_search_key" id="loginlogLists_search_key" lay-verify="">
+                  <option value="browser">browser</option>
+                  <option value="createTime">createTime</option>
+                  <option value="ipAddress">ipAddress</option>
+                  <option value="logName">logName</option>
+                  <option value="loginLocation">loginLocation</option>
+                  <option value="loginLogId">loginLogId</option>
+                  <option value="message">message</option>
+                  <option value="succeed">succeed</option>
+                  <option value="userId">userId</option>
+                </select>
+              </div>
+              <div class="layui-inline">
+                <input class="layui-input" name="loginlogLists_search_val" id="loginlogLists_search_val"
+                  autocomplete="off">
+              </div>
+            </div>
+            <button class="loginlogLists_search_btn layui-btn" data-type="reload">搜索</button>
+          </div>
+          <table class="layui-hide" id="dataBack-loginlogLists" lay-filter="dataBack-loginlogLists"></table>
+          <script type="text/html" id="dataBack-loginlogLists-bar">
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use(['admin', 'table', 'form'], function () {
+    var admin = layui.admin
+      , form = layui.form
+      , table = layui.table
+      , $ = layui.$;
+    form.render(null, 'component-form-element');
+    table.render({
+      elem: '#dataBack-loginlogLists'
+      , url: layui.api.loginLog_findLoginLogList
+      , cellMinWidth: 60 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      , cols: [[
+        { field: 'browser', title: 'browser' }
+        , { field: 'createTime', title: 'createTime' }
+        , { field: 'ipAddress', title: 'ipAddress' }
+        , { field: 'logName', title: 'logName' }
+        , { field: 'loginLocation', title: 'loginLocation' }
+        , { field: 'loginLogId', title: 'loginLogId' }
+        , { field: 'message', title: 'message' }
+        , { field: 'succeed', title: 'succeed' }
+        , { field: 'userId', title: 'userId' }
+        , { title: '操作', align: 'center', fixed: 'right', toolbar: '#dataBack-loginlogLists-bar' }
+      ]]
+      , page: true
+      , layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+      , request: {
+        pageName: 'page' //页码的参数名称，默认：page
+        , limitName: 'size' //每页数据量的参数名，默认：limit
+      }
+    });
+    //搜索和删除执行重载封装
+    var active = {
+      reload: function () {
+        var _val = $('#loginlogLists_search_val'),
+          _key = $('#loginlogLists_search_key');
+        //执行重载 
+        table.reload('dataBack-loginlogLists', {
+          page: {
+            curr: 1 //重新从第 1 页开始
+          }
+          , where: {
+            searchVal: _val.val(),
+            searchKey: _key.val()
+          }
+        });
+      },
+      delreload: function () {
+        var _val = $('#loginlogLists_search_val'),
+          _key = $('#loginlogLists_search_key');
+        //执行重载 
+        table.reload('dataBack-loginlogLists', {
+          where: {
+            searchVal: _val.val(),
+            searchKey: _key.val()
+          }
+        });
+      }
+    };
+    //搜索按钮监听
+    $('.loginlogLists_search_btn').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+    //监听工具条
+    table.on('tool(dataBack-loginlogLists)', function (obj) {
+      var data = obj.data;
+      if (obj.event === 'del') {
+        admin.req({
+          url: layui.api.loginLog_delete
+          , data: { loginLogId: data.loginLogId }
+          , done: () => {
+            active['delreload'].call(this)
+          }
+        })
+      }
+    });
+  });
+</script>

@@ -1,0 +1,87 @@
+<title>消息中心</title>
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="/WDHdataStatistics/dataFront/Visualization">主页</a>
+    <a><cite>消息中心</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid" id="LAY-app-message">
+  <div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+      <ul class="layui-tab-title">
+        <li class="layui-this">通知</li>
+      </ul>
+      <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+          <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
+            <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="all"
+              data-events="readyAll">全部已读</button>
+          </div>
+          <table id="LAY-app-message-all" lay-filter="LAY-app-message-all"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use(['admin', 'table', 'util'], function () {
+    var $ = layui.$
+      , admin = layui.admin
+      , table = layui.table
+      , element = layui.element;
+
+    var DISABLED = 'layui-btn-disabled'
+
+      //区分各选项卡中的表格
+      , tabs = {
+        all: {
+          text: '通知'
+          , id: 'LAY-app-message-all'
+        }
+      };
+
+    //标题内容模板
+    var tplTitle = function (d) {
+      return '<a lay-href="WDHnavViews/message/detail/id=' + d.id + '">' + d.title;
+    };
+
+    //全部消息
+    table.render({
+      elem: '#LAY-app-message-all'
+      , url: './MyJson/消息列表.json' //模拟接口
+      , cols: [[
+        { type: 'checkbox', fixed: 'left' }
+        , { field: 'title', title: '标题内容', minWidth: 300, templet: tplTitle }
+        , { field: 'time', title: '时间', width: 170, templet: '<div>{{ layui.util.timeAgo(d.time) }}</div>' }
+      ]]
+      , skin: 'line'
+      , page: true
+      , layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+      , request: {
+        pageName: 'currpage' //页码的参数名称，默认：page
+        , limitName: 'limitnums' //每页数据量的参数名，默认：limit
+      }
+    });
+
+    //事件处理
+    var events = {
+      readyAll: function (othis, type) {
+        var thisTabs = tabs[type];
+        //do somethin
+        layer.msg(thisTabs.text + '：全部已读', {
+          icon: 1
+        });
+        admin.req({ data: { event: "allReaded" } })
+      }
+    };
+    $('.LAY-app-message-btns .layui-btn').on('click', function () {
+      var othis = $(this)
+        , thisEvent = othis.data('events')
+        , type = othis.data('type');
+      events[thisEvent] && events[thisEvent].call(this, othis, type);
+    });
+  });
+</script>

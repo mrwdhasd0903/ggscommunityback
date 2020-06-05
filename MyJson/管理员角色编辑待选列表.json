@@ -1,0 +1,21 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1000,
+  "data": [{
+    "role_id": 1001,
+    "role_name": "超级管理员"
+  }, {
+    "role_id": 1002,
+    "role_name": "普通管理员"
+  }, {
+    "role_id": 1003,
+    "role_name": "再来一个管理员"
+  }, {
+    "role_id": 1004,
+    "role_name": "炒鸡管理员"
+  }, {
+    "role_id": 1005,
+    "role_name": "草鸡管理员"
+  }]
+}

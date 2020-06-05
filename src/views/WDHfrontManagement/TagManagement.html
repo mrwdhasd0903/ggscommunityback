@@ -1,0 +1,142 @@
+<title>标签管理</title>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">标签管理[先借用分类的视图]</div>
+        <div class="layui-card-body">
+
+          <div style="margin-bottom: 10px;">
+            搜索
+            <div class="layui-inline layui-form" lay-filter="component-form-element">
+              <div class="layui-inline">
+                <select name="article-class-Lists_key" id="article-class-Lists_key" lay-verify="">
+                  <option value="article_class_name">名称</option>
+                  <option value="article_class_status">状态</option>
+                  <option value="article_class_text">描述</option>
+                  <option value="article_count">文章数量</option>
+                  <option value="create_user">创建者</option>
+                </select>
+              </div>
+              <div class="layui-inline">
+                <input class="layui-input" name="article-class-Lists_val" id="article-class-Lists_val"
+                  autocomplete="off">
+              </div>
+            </div>
+            <button class="article-class-Lists_btn layui-btn" data-type="reload">搜索</button>
+            <button class="article_class_btn layui-btn layui-btn-normal" data-type="roleLists_add">添加</button>
+          </div>
+
+          <table class="layui-hide" id="article-class-Lists" lay-filter="article-class-Lists"></table>
+          <script type="text/html" id="status-switch">
+            <input type="checkbox" name="article_class_status" lay-skin="switch" lay-text="正常|停用" lay-filter="article_class_status"
+              value="{{ d.article_class_status }}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}"
+              {{ d.article_class_status ? 'checked' : '' }}>
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  layui.use(['admin', 'table', 'form'], function () {
+    var admin = layui.admin
+      , form = layui.form
+      , table = layui.table
+      , $ = layui.$;
+    form.render(null, 'component-form-element');
+    table.render({
+      elem: '#article-class-Lists'
+      , url: './MyJson/文章分类.json'
+      , cellMinWidth: 60 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      , cols: [[
+        { field: 'article_class_id', title: 'id' }
+        , { field: 'article_class_name', title: '名称', edit: 'text' }
+        , { field: 'article_class_status', title: '状态', sort: true, templet: '#status-switch' }
+        , { field: 'article_class_text', title: '描述', edit: 'text' }
+        , { field: 'article_count', title: '文章数量' }
+        , { field: 'create_user', title: '创建者' }
+      ]]
+      , page: true
+      , layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+      , request: {
+        pageName: 'currpage' //页码的参数名称，默认：page
+        , limitName: 'limitnums' //每页数据量的参数名，默认：limit
+      }
+    });
+    //添加按钮监听
+    $(".article_class_btn").on("click", () => {
+      layer.open({
+        type: 1,
+        title: '填入信息',
+        content: `
+        <div class="layui-form" style="margin:20px" lay-filter="article_class_add_form">
+          <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+              <input type="text" name="article_class_add_name" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+          <label class="layui-form-label">状态</label>
+          <div class="layui-input-block">
+                <input type="checkbox" name="article_class_add_status" lay-skin="switch" lay-text="正常|停用">
+              </div>
+        </div>
+          <div class="layui-form-item">
+          <label class="layui-form-label">描述</label>
+          <div class="layui-input-block">
+            <input type="text" name="article_class_add_text" lay-verify="" placeholder="" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="article_class_add_form">提交</button>
+              </div>
+            </div>
+        </div>`
+      });
+      form.render(null, 'article_class_add_form');
+      form.on('submit(article_class_add_form)', function (data) {
+        admin.req({ data: data.field })
+        return false;
+      });
+
+    })
+    //搜索执行重载封装
+    var active = {
+      reload: function () {
+        var _val = $('#article-class-Lists_val'),
+          _key = $('#article-class-Lists_key');
+        //执行重载 
+        table.reload('article-class-Lists', {
+          page: {
+            curr: 1 //重新从第 1 页开始
+          }
+          , where: {
+            article_class_Lists_val: _val.val(),
+            article_class_Lists_key: _key.val()
+          }
+        });
+      }
+    };
+    //搜索按钮监听
+    $('.article-class-Lists_btn').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+    //监听状态操作
+    form.on('switch(article_class_status)', function (obj) {
+      var json = JSON.parse(decodeURIComponent($(this).data('json')));
+      json = table.clearCacheKey(json);
+      json[this.name] = obj.elem.checked;
+      admin.req({ data: json })
+    });
+    //监听单元格编辑
+    table.on('edit(article-class-Lists)', function (obj) {
+      var json = obj.data //得到所在行所有键值
+      admin.req({ data: json })
+    });
+  });
+</script>
